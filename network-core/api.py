@@ -67,3 +67,5 @@ class NetworkInterface(object):
     #            b.iface = self
     #            b.refresh()
     #            self.bits.append(b)
+
+
