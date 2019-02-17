@@ -2,6 +2,7 @@ import nc_debian
 import pywifi
 import time
 import api
+import ifcfg
 
 class Helper:
 
@@ -15,23 +16,51 @@ class Helper:
 
 
 class NetworkApi:
+    '''network apis'''
     network_config = None
     wifi = None
     def __init__(self):
         self.network_config = nc_debian.DebianNetworkConfig()
         self.wifi = pywifi.PyWiFi()
 
-    def GetInterfaces(self):
-        pass
+    def GetInterfaces(self) -> dict:
+        ''' get all interface info'''
+        
+        self.network_config.rescan()
+        interfaces_from_etc = self.network_config.interfaces
+        interfaces_from_ifcfg = ifcfg.interfaces()
+        dhcp_ifacs = interfaces_from_ifcfg.keys() - interfaces_from_etc.keys()
+        for ifac in dhcp_ifacs:
+            interface = api.NetworkInterface()
+            interface.name = ifac
+            interface.addressing = 'dhcp'
+            interface.up = True
+            params = {}
+            params['address'] = interfaces_from_ifcfg[ifac]['inet']
+            params['netmask'] = interfaces_from_ifcfg[ifac]['netmask']
+            interface.params = params
+            interfaces_from_etc[ifac] = interface
 
-    def SaveConfig(self, iface = api.NetworkInterface()):
+        return interfaces_from_etc
+
+    def SaveConfig(self, iface:api.NetworkInterface):
+        '''save interface config'''
+
         self.network_config.interfaces[iface.name] = iface
         self.network_config.save()
 
-    def Wifis(self):
-        wifis = {}
+    def WifiScan(self, timeout):
+        '''scan wifi '''
+
         for iface in self.wifi.interfaces():
             iface.scan()
+            time.sleep(timeout)
+
+    def Wifis(self) -> dict:
+        ''' get wifis'''
+
+        wifis = {}
+        for iface in self.wifi.interfaces():
             # 去重
             profiles = {}
             for profile in iface.scan_results():
@@ -40,8 +69,9 @@ class NetworkApi:
         
         return wifis
         
-    ''' '''
-    def WifiConnect(self, interface, name, key, akm = pywifi.const.AKM_TYPE_NONE):
+    def WifiConnect(self, interface, name, key, akm = pywifi.const.AKM_TYPE_WPA2PSK) -> bool:
+        '''connect the sepcify wifi'''
+
         iface = None
         for it in self.wifi.interfaces():
             if it.name == interface:
@@ -62,6 +92,8 @@ class NetworkApi:
         return iface.status() == pywifi.const.IFACE_CONNECTED
 
     def WifiDisconnect(self, interface):
+        '''disconnect wifi'''
+
         iface = None
         for it in self.wifi.interfaces():
             if it.name == interface:
@@ -70,4 +102,3 @@ class NetworkApi:
             return
         iface.disconnect()
         time.sleep(1)
-

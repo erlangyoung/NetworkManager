@@ -5,9 +5,6 @@ import socket
 import struct
 import re
 
-#from ajenti.api import *
-#from ajenti.ui import *
-
 
 class LinuxIfconfig (object):
     platforms = ['debian', 'centos', 'mageia']

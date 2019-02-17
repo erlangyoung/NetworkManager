@@ -1,16 +1,3 @@
-import psutil
-
-#from ajenti.api import *
-#from ajenti.ui import *
-
-
-#@plugin
-#class NetworkManager (BasePlugin):
-#    def get_devices(self):
-#        return psutil.net_io_counters(pernic=True).keys()
-
-
-#@interface
 class INetworkConfig (object):
     interfaces = {}
 
@@ -25,19 +12,9 @@ class INetworkConfig (object):
         pass
 
 
-#@interface
 class INetworkConfigBit (object):
     def apply(self):
         pass
-
-
-#@plugin
-#class NetworkConfigBit (UIElement, INetworkConfigBit):
-#    cls = 'unknown'
-#    iface = None
-#    title = 'Unknown'
-#    typeid = 'box'
-
 
 class NetworkInterface(object):
     def __init__(self):
@@ -59,13 +36,3 @@ class NetworkInterface(object):
 
     def __setitem__(self, idx, val):
         self.params[idx] = val
-
-    #def add_bits(self, ui):
-    #    for cls in INetworkConfigBit.get_classes():
-    #        if cls.cls in self.bit_classes:
-    #            b = cls.new(ui)
-    #            b.iface = self
-    #            b.refresh()
-    #            self.bits.append(b)
-
-

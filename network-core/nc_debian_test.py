@@ -1,5 +1,12 @@
-import nc_debian
+import sys
+from os.path import abspath, join, dirname
+#sys.path.append('/home/yang/Projects/NetworkManager/network-core')
+#sys.path.append('/home/yang/Projects/NetworkManager')
+#sys.path.insert(0, join(abspath(dirname(dirname(__file__))), 'network-core'))
+#print(sys.path)
 
+
+import nc_debian
 
 def PrintInterfaces(interfaces):
     for ifac in interfaces.values():
@@ -16,7 +23,9 @@ def PrintInterfaces(interfaces):
 network_config = nc_debian.DebianNetworkConfig()
 interfaces = network_config.interfaces
 PrintInterfaces(interfaces)
-
+print('\n')
+print(interfaces)
+#
 #op_ifac = None
 #for ifac in interfaces.values():
 #    if ifac.name == 'ens33':

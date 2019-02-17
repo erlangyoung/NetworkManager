@@ -1,5 +1,3 @@
-
-#from ajenti.api import *
 import subprocess
 
 from api import *
